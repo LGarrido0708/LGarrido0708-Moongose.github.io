@@ -43,8 +43,7 @@ exports.delete = (id, res) => {
     });   
 }
 
-//exports.update = (id,newData, res) => {
-exports.update = (req, res, id) => {
+exports.update = (id,newData, res) => {
     shop.findByIdAndUpdate(req, id, (err, doc) => {
         if (err) {
             res.end("0")

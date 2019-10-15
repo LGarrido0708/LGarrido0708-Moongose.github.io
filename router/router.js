@@ -39,11 +39,7 @@ module.exports = function (app) {
 	});
 
 	app.post('/item/update/:id', (req, res) => {
-		//users.update(req.params.id, res)
-		let id = req.params.id;
-		console.log(id);
-		users.update(req,res,id);
-		console.log("Successful update.")
+		users.update(req.params.id, res)
 	});
 
 }
