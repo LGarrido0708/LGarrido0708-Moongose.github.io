@@ -18,7 +18,7 @@ var shoppingSchema = new mongoose.Schema({
     },
 
     priority: {
-        type: Number
+        type: String
     }
 
 });

@@ -29,11 +29,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="container" style="margin-top:15%;">
-            <!-- Trigger the modal with a button -->
+        <div class="container" style="margin-top:5%;">
             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Item</button>
-
-            <!-- Modal -->
             <div class="modal fade" id="myModal" role="dialog">
                 <div class="modal-dialog">
 
@@ -45,21 +42,33 @@
                         </div>
                         <div class="modal-body">
                             <form>
-
-                                <input class="form-control" type="text" id='item' placeholder="Item"><br>
-
-                                <input class="form-control" type="number" id="quantity" placeholder="Quantity"><br>
-
-                                <input class="form-control" type="number" id="priority" placeholder="Priority">
+                                <input class="form-control" type="text" id='item' placeholder="Item" required><br>
+                                <input class="form-control" type="number" id="quantity" placeholder="Quantity" required><br>
+                                <select id="priority" class="form-control">
+                                    <option value="1">1 (Not Priority)</option>
+                                    <option value="2">2 (Less Priority)</option>
+                                    <option value="3">3 (Most Priority)</option>
+                                </select>
 
                             </form>
                         </div>
-                        <div class="modal-footer">
-                            <button id="add" type="button" class="btn btn-info btn-lg" data-dismiss="modal">Add</button>
+                        <div class="modal-footer" id="buttons">
+                            <button id="add" type="button" class="btn btn-info btn-lg">Add</button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div style="display:none;width : 400px;" id="updateForm" class="card bg-secondary container modal">
+            <div class="card-header text-white">Update Item</div>
+            <div class="card-body text-center">
+                <form action="" class="form was-validated"> <input type="text" class="form-control" name="itemUpdate"
+                        placeholder="Name" required autofocus><br> <input type="number" class="form-control" name="quantityUpdate"
+                        placeholder="Quantity" min="1" required><br> <input type="number" class="form-control" name="priorityUpdate"
+                        placeholder="Priority" min="1" max="3" required> </form>
+            </div>
+            <div class="card-footer"> <button id="updateItem" class="btn btn-success">UPDATE</button> <button id="updateCancel"
+                    class="btn btn-danger">CANCEL</button> </div>
         </div>
 
     </center>
@@ -70,49 +79,47 @@
             // events
             retrieveAll()
             $('#add').click(function (e) {
-                $("#container").show();
-                e.preventDefault();
-                var items = {
-                    item: $('#item').val(),
-                    quantity: $('#quantity').val(),
-                    priority: $('#priority').val(),
-                }
-
-                console.log(items)
-                $.ajax({
-                    url: 'http://localhost:8081/item/create',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: items,
-                    error: (e) => {
-                        console.log(e)
-                    },
-                    success: function (res) {
-                        addRows(res)
+                if ($('#item').val() === "" || $('#quantity').val() === "") {
+                    alert("Complete the fields!")
+                } else {
+                    e.preventDefault();
+                    var items = {
+                        item: $('#item').val(),
+                        quantity: $('#quantity').val(),
+                        priority: $('#priority').val(),
                     }
-                })
 
+                    console.log(items)
+                    $.ajax({
+                        url: 'http://localhost:8081/item/create',
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: items,
+                        error: (e) => {
+                            console.log(e)
+                        },
+                        success: function (res) {
+                            addRows(res)
+                        }
+                    })
+                }
             })
 
             $(document).on('click', ".action-btn", () => {
                 var temp = $(this)[0].activeElement.id;
                 var id = temp.split("_")
                 if (id[0] == "update") {
-                    console.log(
-                        $("#delete_" + id[1]).parent().parent().parent().attr("id")
-                    )
-                    // updateItem(id[1])
                 } else if (id[0] == "delete") {
                     deleteItem(id[1])
-                    $("#"+temp).parent().parent().parent().fadeOut()
+                    $("#" + temp).parent().parent().parent().fadeOut()
                 }
             })
             // user defined functions
             function addRows(items) {
                 var buttons = $("<div>").append(
-                    $("<button>", {
+                    $('<button>', {
                         id: "update_" + items._id,
-                        class: "btn btn-warning update-btn btn-sm action-btn"
+                        class: "edit btn btn btn-info update-btn btn-sm action-btn",
                     }).text("update").css({
                         "border-radius": "40px",
                         marginLeft: "10px"
@@ -154,7 +161,7 @@
             function updateItem(id) {
                 $.ajax({
                     url: "/item/update/" + id,
-                    type: "get",
+                    type: "post",
                     error: (e) => {
                         console.error(e)
                     },
@@ -177,6 +184,24 @@
                     }
                 })
             }
+
+            var updateId;
+            $(document).on("click", ".edit", function () { 
+                status = false;
+                updateId = $(this).updateId;
+                $("#updateForm").show();
+            })
+
+            $(document).on("click", "#updateItem", function () {
+                updateItem(updateId);
+                $("#updateForm").hide();
+            })
+
+            $("#updateCancel").on('click', function (e) {
+                e.preventDefault();
+                $("#updateForm").hide();
+                $("#showTable").show();
+            })
 
         })
     </script>

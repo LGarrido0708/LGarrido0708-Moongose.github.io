@@ -32,15 +32,18 @@ module.exports = function (app) {
 	})
 	app.post('/item/create', (req, res) => {
 		users.save(req.body, res)
-
 	});
 
 	app.get('/item/delete/:id', (req, res) => {
 		users.delete(req.params.id, res)
 	});
 
-	app.get('/item/update/:id', (req, res) => {
-		users.update(req.params.id, res)
+	app.post('/item/update/:id', (req, res) => {
+		//users.update(req.params.id, res)
+		let id = req.params.id;
+		console.log(id);
+		users.update(req,res,id);
+		console.log("Successful update.")
 	});
 
 }

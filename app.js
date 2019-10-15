@@ -1,15 +1,17 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
 app.use(express.static('resources'));
 
 global.__basedir = __dirname;
 
 const dbConfig = require('./config/dbConfig.js');
-const mongoose = require('mongoose');
+
 
 mongoose.Promise = global.Promise;
 
