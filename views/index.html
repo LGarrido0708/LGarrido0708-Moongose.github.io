@@ -9,63 +9,65 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <title>Item</title>
+    <title>FicType</title>
 </head>
 
 <body>
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-6 h1">FicType</span>
+        <form class="form-inline" style="float:left;">
+            <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search Story" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn">Search</button>
+            <div>&nbsp;&nbsp;</div>
+            <button class="btn btn-outline-primary my-2 my-sm-0" id="sortBtn">Sort by Title</button>
+            <div>&nbsp;&nbsp;</div>
+            <button class="btn btn-outline-primary my-2 my-sm-0" id="home">Home</button>
+        </form>
+    </nav>
+    <br><br><br>
     <center>
         <div id="container" class="container">
-            <h2>List of Items</h2>
-            <table id="table" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Prority</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <div class="container" style="margin-top:5%;">
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Item</button>
-            <div class="modal fade" id="myModal" role="dialog">
-                <div class="modal-dialog">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add Item</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                                <input class="form-control" type="text" id='item' placeholder="Item" required><br>
-                                <input class="form-control" type="number" id="quantity" placeholder="Quantity" required><br>
-                                <select id="priority" class="form-control">
-                                    <option value="1">1 (Not Priority)</option>
-                                    <option value="2">2 (Less Priority)</option>
-                                    <option value="3">3 (Most Priority)</option>
-                                </select>
-
-                            </form>
-                        </div>
-                        <div class="modal-footer" id="buttons">
-                            <button id="add" type="button" class="btn btn-info btn-lg">Add</button>
-                        </div>
+            <div class="row">
+                <div class="card mt-3" style="width:500px; height:auto; background-color: #ab73ff;">
+                    <img class="card-img-top" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg"
+                        alt="Card image" style="width:100%">
+                    <div class="card-body">
+                        <h4>Create Your Own Story</h4>
+                        <p class="card-text"></p>
+                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Story</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <input class="form-control" type="text" id='item' placeholder="Story Title" required><br>
+                            <input class="form-control" type="text" id="quantity" placeholder="Description" required><br>
+                            <div></div>
+                            <input class="form-control" type="text" id="priority" placeholder="Story Content" required><br>
+                        </form>
+                    </div>
+                    <div class="modal-footer" id="buttons">
+                        <button id="add" type="button" class="btn btn-info btn-lg">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
     </center>
 
 
     <script>
         $(document).ready(function () {
-            // events
+            var current = "";
             retrieveAll()
             $('#add').click(function (e) {
                 if ($('#item').val() === "" || $('#quantity').val() === "") {
@@ -77,7 +79,6 @@
                         quantity: $('#quantity').val(),
                         priority: $('#priority').val(),
                     }
-
                     console.log(items)
                     $.ajax({
                         url: 'http://localhost:8081/item/create',
@@ -94,45 +95,68 @@
                 }
             })
 
+            $('#sortBtn').click(function (e) {
+                e.preventDefault();
+                $('.card').sort(function (a, b) {
+                    return $(a).find(".card-title").text() > $(b).find(".card-title").text() ? 1 : -1;
+                }).appendTo(".row");
+            })
+            var status = false;
+
+            $('#searchBtn').click(function (e) {
+                e.preventDefault();
+                $('.card').find('#' + $('#search').val()+'Search').css({
+                    "color": "#ab73ff"
+                }); 
+            })
+
+
+            $("#save").click(function (e) {
+                e.preventDefault();
+                current = $('#edited').val()
+                console.log(current)
+            })
+
             $(document).on('click', ".action-btn", () => {
                 var temp = $(this)[0].activeElement.id;
                 var id = temp.split("_")
                 if (id[0] == "update") {
+                    updateItem(id[1])
                 } else if (id[0] == "delete") {
                     deleteItem(id[1])
                     $("#" + temp).parent().parent().parent().fadeOut()
                 }
             })
-            // user defined functions
+
             function addRows(items) {
                 var buttons = $("<div>").append(
-                    $('<button>', {
-                        id: "update_" + items._id,
-                        class: "edit btn btn btn-info update-btn btn-sm action-btn",
-                    }).text("update").css({
-                        "border-radius": "40px",
+                    $('<button class="edit btn btn-info update-btn btn-sm action-btn" data-toggle="modal" data-target="#' + items.item + 'Edit">', {
+                        id: "update_" + items._id
+                    }).text("Edit").css({
                         marginLeft: "10px"
                     }),
                     $("<button>", {
                         id: "delete_" + items._id,
-                        class: "btn btn-danger btn-sm delete-btn action-btn"
+                        class: "btn btn-info btn-sm delete-btn action-btn"
                     }).text("delete").css({
-                        "border-radius": "40px",
                         marginLeft: "10px"
                     })
                 )
-                $('<tr>', {
+                $('<div class="card mt-3" style="width:280px; height:auto;">', {
                     id: items._id
                 }).append(
-                    $('<td>').text(items.item),
-                    $('<td>').text(items.quantity),
-                    $('<td>').text(items.priority),
-                    $('<td>').append(buttons),
-                ).appendTo('table tbody')
+                    $('<img style="width:100%" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg "/>').addClass('card-img-top'),
+                    $('<h4 id="' + items.item + 'Search">').text(items.item).addClass("card-title"),
+                    $('<p>').text(items.quantity).addClass("card-text"),
+                    $('<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#' + items.item + '">').text("Read"),
+                    $('<div>').append($("<br>"), buttons, $("<br>")),
+                ).appendTo('.row')
+                current = items.priority
+                $("body").append('<div class="modal fade" id ="' + items.item + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.item + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + items.priority + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
+                $("body").append('<div class="modal fade" id ="' + items.item + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.item + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="edited">' + current + '</textarea></div><div class="modal-footer"><button class="edit btn btn-info update-btn btn-sm action-btn" id="save" type="button" class="btn btn-default" data-dismiss="modal">Save</button></div></div></div></div>');
             }
 
             function retrieveAll() {
-                $('tbody').empty()
                 $.ajax({
                     url: "/item/retrieve/all",
                     type: "get",
@@ -173,7 +197,6 @@
                     }
                 })
             }
-
         })
     </script>
 </body>

@@ -16,9 +16,6 @@ module.exports = function (app) {
 		res.sendFile(path + "index.html");
 	});
 
-	// Save a User to MongoDB
-
-
 	app.get("/item/retrieve/:item", (req, res) => {
 		if (req.params.item != "all") {
 			// Retrieve  Item

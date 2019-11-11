@@ -14,7 +14,7 @@ var shoppingSchema = new mongoose.Schema({
     },
 
     quantity: {
-        type: Number,
+        type: String,
     },
 
     priority: {
