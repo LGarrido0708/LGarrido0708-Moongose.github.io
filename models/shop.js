@@ -1,22 +1,14 @@
 const mongoose = require('mongoose')
 
-// mongoose.connect('mongodb://localhost/myshop', { useNewUrlParser: true, useUnifiedTopology: true });
-// var db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function () {
-//     console.log("Connected!")
-// });
-
 var shoppingSchema = new mongoose.Schema({
 
-    item: {
-        title: String
+    title: {
+        type: String
     },
 
     description: {
         type: String,
     },
-
     content: {
         type: String
     }

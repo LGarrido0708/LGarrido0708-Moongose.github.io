@@ -8,7 +8,6 @@ exports.save = (req, res) => {
     const shops = new Shop(req);
     shops.save()
         .then(data => {
-            console.log(data)
             res.send(data);
         }).catch(err => {
             console.log(err)
