@@ -10,14 +10,14 @@ const mongoose = require('mongoose')
 var shoppingSchema = new mongoose.Schema({
 
     item: {
-        type: String
+        title: String
     },
 
-    quantity: {
+    description: {
         type: String,
     },
 
-    priority: {
+    content: {
         type: String
     }
 

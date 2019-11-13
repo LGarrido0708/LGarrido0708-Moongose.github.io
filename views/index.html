@@ -28,7 +28,7 @@
     <center>
         <div id="container" class="container">
             <div class="row">
-                <div class="card mt-3" style="width:500px; height:auto; background-color: #ab73ff;">
+                <div class="card mt-3 main" style="width:500px; height:auto; background-color: #ab73ff;">
                     <img class="card-img-top" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg"
                         alt="Card image" style="width:100%">
                     <div class="card-body">
@@ -52,7 +52,8 @@
                             <input class="form-control" type="text" id='item' placeholder="Story Title" required><br>
                             <input class="form-control" type="text" id="quantity" placeholder="Description" required><br>
                             <div></div>
-                            <input class="form-control" type="text" id="priority" placeholder="Story Content" required><br>
+                            <textarea rows="15" class="form-control" type="text" id="priority" placeholder="Story Content"
+                                required></textarea><br>
                         </form>
                     </div>
                     <div class="modal-footer" id="buttons">
@@ -64,20 +65,22 @@
         <br>
     </center>
 
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         $(document).ready(function () {
-            var current = "";
             retrieveAll()
             $('#add').click(function (e) {
                 if ($('#item').val() === "" || $('#quantity').val() === "") {
-                    alert("Complete the fields!")
+                    swal({
+                        icon: "error",
+                        title: "Fields not completed!"
+                    });
                 } else {
                     e.preventDefault();
                     var items = {
-                        item: $('#item').val(),
-                        quantity: $('#quantity').val(),
-                        priority: $('#priority').val(),
+                        title: $('#item').val(),
+                        description: $('#quantity').val(),
+                        qauntity: $('#priority').val(),
                     }
                     console.log(items)
                     $.ajax({
@@ -101,28 +104,37 @@
                     return $(a).find(".card-title").text() > $(b).find(".card-title").text() ? 1 : -1;
                 }).appendTo(".row");
             })
-            var status = false;
+
+            function search(id) {
+                $('body').find(id).css({
+                    "display": "block"
+                })
+                console.log("Found")
+            }
 
             $('#searchBtn').click(function (e) {
                 e.preventDefault();
-                $('.card').find('#' + $('#search').val()+'Search').css({
-                    "color": "#ab73ff"
-                }); 
+                $('body').find(".card").css({
+                    "display": "none"
+                })
+                id = '#' + $('#search').val() + "Search"
+                search(id)
             })
 
 
             $("#save").click(function (e) {
                 e.preventDefault();
-                current = $('#edited').val()
-                console.log(current)
+                var temp = $(this)[0].activeElement.id;
+                var id = temp.split("_")
+                if (id[0] == "update") {
+                    updateItem(id[1])
+                }
             })
 
             $(document).on('click', ".action-btn", () => {
                 var temp = $(this)[0].activeElement.id;
                 var id = temp.split("_")
-                if (id[0] == "update") {
-                    updateItem(id[1])
-                } else if (id[0] == "delete") {
+                if (id[0] == "delete") {
                     deleteItem(id[1])
                     $("#" + temp).parent().parent().parent().fadeOut()
                 }
@@ -130,8 +142,7 @@
 
             function addRows(items) {
                 var buttons = $("<div>").append(
-                    $('<button class="edit btn btn-info update-btn btn-sm action-btn" data-toggle="modal" data-target="#' + items.item + 'Edit">', {
-                        id: "update_" + items._id
+                    $('<button id="update_' + items._id + '" class="edit btn btn-info update-btn btn-sm action-btn" data-toggle="modal" data-target="#' + items.item + 'Edit">', {
                     }).text("Edit").css({
                         marginLeft: "10px"
                     }),
@@ -142,18 +153,18 @@
                         marginLeft: "10px"
                     })
                 )
-                $('<div class="card mt-3" style="width:280px; height:auto;">', {
+                $('<div id="' + items.title + 'Search" class="card mt-3" style="width:280px; height:auto;">', {
                     id: items._id
                 }).append(
                     $('<img style="width:100%" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg "/>').addClass('card-img-top'),
-                    $('<h4 id="' + items.item + 'Search">').text(items.item).addClass("card-title"),
-                    $('<p>').text(items.quantity).addClass("card-text"),
+                    $('<h4 id="' + items.title + 'Search">').text(items.title).addClass("card-title"),
+                    $('<p>').text(items.description).addClass("card-text"),
                     $('<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#' + items.item + '">').text("Read"),
                     $('<div>').append($("<br>"), buttons, $("<br>")),
                 ).appendTo('.row')
-                current = items.priority
-                $("body").append('<div class="modal fade" id ="' + items.item + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.item + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + items.priority + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
-                $("body").append('<div class="modal fade" id ="' + items.item + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.item + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="edited">' + current + '</textarea></div><div class="modal-footer"><button class="edit btn btn-info update-btn btn-sm action-btn" id="save" type="button" class="btn btn-default" data-dismiss="modal">Save</button></div></div></div></div>');
+                current = items.content
+                $("body").append('<div class="modal fade" id ="' + items.title + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + items.content + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
+                $("body").append('<div class="modal fade" id ="' + items.title + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="edited">' + current + '</textarea></div><div class="modal-footer"><button class="edit btn btn-info update-btn btn-sm action-btn" id="save" type="button" class="btn btn-default" data-dismiss="modal">Save</button></div></div></div></div>');
             }
 
             function retrieveAll() {

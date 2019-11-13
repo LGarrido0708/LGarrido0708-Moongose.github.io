@@ -3,7 +3,10 @@ module.exports = function (app) {
 	var express = require("express");
 	var router = express.Router();
 
-	const users = require('../controller/controller.js');
+	const create = require('../controller/create.js');
+	const retrieve = require('../controller/retrieve.js');
+	const update = require('../controller/update.js');
+	const deleted = require('../controller/delete.js');
 
 	var path = __basedir + '/views/';
 
@@ -19,24 +22,24 @@ module.exports = function (app) {
 	app.get("/item/retrieve/:item", (req, res) => {
 		if (req.params.item != "all") {
 			// Retrieve  Item
-			users.findId(res, req.params.item)
+			retrieve.findId(res, req.params.item)
 		}
 		else {
 			// Retrieve all Item
-			users.findAll(res)
+			retrieve.findAll(res)
 		}
 
 	})
 	app.post('/item/create', (req, res) => {
-		users.save(req.body, res)
+		create.save(req.body, res)
 	});
 
 	app.get('/item/delete/:id', (req, res) => {
-		users.delete(req.params.id, res)
+		deleted.delete(req.params.id, res)
 	});
 
 	app.post('/item/update/:id', (req, res) => {
-		users.update(req.params.id, res)
+		update.update(req.params.id, res)
 	});
 
 }

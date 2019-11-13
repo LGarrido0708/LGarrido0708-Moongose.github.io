@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -21,7 +22,7 @@ mongoose.connect(dbConfig.url)
         console.log("Successfully connected to MongoDB.");
     }).catch(err => {
         console.log('Could not connect to MongoDB.');
-        process.exit();
+        //process.exit();
     });
 
 require('./router/router.js')(app);
