@@ -123,12 +123,12 @@
             })
 
 
-            $("#save").click(function (e) {
+            $(document).on('click', ".edit", function (e) {
                 e.preventDefault();
-                console.log("Update")
-                var temp = $(this)[0].activeElement.id;
-                var id = temp.split("_")
-                updateItem(id[1])
+                var id = $(this).attr('id');    
+                var ID = id.split("_")
+                console.log(ID)
+                edit(ID[1])
             })
 
             $(document).on('click', ".action-btn", () => {
@@ -136,6 +136,7 @@
                 var id = temp.split("_")
                 if (id[0] == "delete") {
                     deleteItem(id[1])
+                    console.log("update")
                     $("#" + temp).parent().parent().parent().fadeOut()
                 }
             })
@@ -163,8 +164,12 @@
                     $('<div>').append($("<br>"), buttons, $("<br>")),
                 ).appendTo('.row')
                 current = items.content
-                $("body").append('<div class="modal fade" id ="' + items.title + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + items.content + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
-                $("body").append('<div class="modal fade" id ="' + items.title + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="edited">' + current + '</textarea></div><div class="modal-footer"><button class="edit btn btn-info update-btn btn-sm action-btn" id="save" type="button" class="btn btn-default" data-dismiss="modal">Save</button></div></div></div></div>');
+                $("body").append('<div class="modal fade" id ="' + items.title + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + current + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
+                $("body").append('<div class="modal fade" id ="' + items.title + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="'+items._id+'_edited">' + current + '</textarea></div><div class="modal-footer"><button class="edit btn btn-info update-btn btn-sm action-btn" id="save_'+items._id+'" type="button" class="btn btn-default">Save</button></div></div></div></div>');
+            }
+
+            function edit(id) {
+                //$("body").append('<div class="modal fade" id ="' + items.title + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="content">' + current + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
             }
 
             function retrieveAll() {
