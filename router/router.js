@@ -38,8 +38,10 @@ module.exports = function (app) {
 		deleted.delete(req.params.id, res)
 	});
 
-	app.post('/item/update/:id', (req, res) => {
-		update.update(req.params.id, res)
+	app.post('/item/update/:id/:content', (req, res) => {
+		console.log(req.params)
+		
+		update.update(req.params.id, req.params.content, res)
 	});
 
 }
