@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>FicType</title>
 </head>
 
@@ -74,7 +75,7 @@
         $(document).ready(function () {
             retrieveAll()
             $('#add').click(function (e) {
-                if ($('#title').val() === "" || $('#desciption').val() === "") {
+                if ($('#title').val() === "" || $('#description').val() === "" || $('#content').val() === "") {
                     swal({
                         icon: "error",
                         title: "Fields not completed!"
@@ -98,6 +99,8 @@
                         },
                         success: function (res) {
                             addRows(res)
+                            swal("Good job!", "Story Created!", "success");
+
                         }
                     })
                 }
@@ -138,7 +141,7 @@
 
             $(document).on('click', ".save", function (e) {
                 e.preventDefault();
-                $(this).attr("data-dismiss","modal");
+                $(this).attr("data-dismiss", "modal");
                 console.log(Id)
                 edit(Id)
             })
@@ -147,9 +150,20 @@
                 var temp = $(this)[0].activeElement.id;
                 var id = temp.split("_")
                 if (id[0] == "delete") {
-                    deleteItem(id[1])
-                    console.log("update")
-                    $("#" + temp).parent().parent().parent().fadeOut()
+                    swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, you will not be able to recover this imaginary file!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                        .then((willDelete) => {
+                            if (willDelete) {
+                                deleteItem(id[1])
+                                console.log("update")
+                                $("#" + temp).parent().parent().parent().fadeOut()
+                            }
+                        });
                 }
             })
 
