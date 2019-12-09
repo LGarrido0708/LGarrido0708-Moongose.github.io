@@ -201,11 +201,11 @@
                         marginLeft: "10px"
                     })
                 )
-                $('<div class="cards" id="' + items.title +
+                $('<div id="' + items.title +
 
                     'Search" class="card mt-3 main" style="width:280px; height:auto;">', {
                         id: items._id
-                    }).append(
+                    }).addClass('cards').append(
                     $(
                         '<img style="width:100%" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg "/>'
                     )
