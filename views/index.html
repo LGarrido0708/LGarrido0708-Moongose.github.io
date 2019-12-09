@@ -17,7 +17,8 @@
     <nav class="navbar navbar-dark bg-dark">
         <span class="navbar-brand mb-6 h1">FicType</span>
         <form class="form-inline" style="float:left;">
-            <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search Story" aria-label="Search">
+            <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search Story"
+                aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn">Search</button>
             <div>&nbsp;&nbsp;</div>
             <button class="btn btn-outline-primary my-2 my-sm-0" id="sortBtn">Sort by Title</button>
@@ -30,16 +31,22 @@
         <div id="container" class="container">
             <div class="row">
                 <div class="card mt-3" style="width:500px; height:auto; background-color: #ab73ff;">
-                    <img class="card-img-top" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg"
+                    <img class="card-img-top"
+                        src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg"
                         alt="Card image" style="width:100%">
                     <div class="card-body">
                         <h4>Create Your Own Story</h4>
                         <p class="card-text"></p>
-                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create</button>
+                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+                            data-target="#myModal">Create</button>
                     </div>
                 </div>
             </div>
         </div>
+        <table>
+            <tbody>
+            </tbody>
+        </table>
 
         <div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
@@ -51,10 +58,11 @@
                     <div class="modal-body">
                         <form>
                             <input class="form-control" type="text" id='title' placeholder="Story Title" required><br>
-                            <input class="form-control" type="text" id="description" placeholder="Description" required><br>
+                            <input class="form-control" type="text" id="description" placeholder="Description"
+                                required><br>
                             <div></div>
-                            <textarea rows="15" class="form-control" type="text" id="content" placeholder="Story Content"
-                                required></textarea><br>
+                            <textarea rows="15" class="form-control" type="text" id="content"
+                                placeholder="Story Content" required></textarea><br>
                         </form>
                     </div>
                     <div class="modal-footer" id="buttons">
@@ -71,14 +79,16 @@
         $(document).ready(function () {
             retrieveAll()
             $('#add').click(function (e) {
-                if ($('#title').val() === "" || $('#description').val() === "" || $('#content').val() === "") {
+                if ($('#title').val() === "" || $('#description').val() === "" || $('#content')
+                    .val() === "") {
                     swal({
                         icon: "error",
                         title: "Fields not completed!"
                     });
                 } else {
                     e.preventDefault();
-                    var final = $('#title').val().substr(0, 1).toUpperCase() + $('#title').val().substr(1)
+                    var final = $('#title').val().substr(0, 1).toUpperCase() + $('#title').val().substr(
+                        1)
                     var items = {
                         title: final,
                         description: $('#description').val(),
@@ -111,24 +121,18 @@
             $('#sortBtn').click(function (e) {
                 e.preventDefault();
                 $('.main').sort(function (a, b) {
-                    return $(a).find(".card-title").text() > $(b).find(".card-title").text().toLowerCase ? 1 : -1;
+                    return $(a).find(".card-title").text() > $(b).find(".card-title").text()
+                        .toLowerCase ? 1 : -1;
                 }).appendTo(".row");
             })
 
-            function search(id) {
-                $('body').find(id).css({
-                    "display": "block"
-                })
-                console.log("Found")
-            }
-
-            $('#searchBtn').click(function (e) {
+            $('#search').on("keyup", function (e) {
                 e.preventDefault();
-                $('body').find(".card").css({
-                    "display": "none"
-                })
-                id = '#' + $('#search').val() + "Search"
-                search(id)
+                var value = $(this).val().toLowerCase();
+                $(".cards").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+                console.log($(this).val().toLowerCase())
             })
 
             let Id = ""
@@ -140,23 +144,25 @@
             })
 
             $(document).on('click', ".save", function (e) {
-                if($("#contentData").html() !== $(`#${Id}_edited`).val()) {
-                e.preventDefault();
-                swal({
-                    icon: "success",
-                    text: "Story updated!"
-                });
-                $(".updateModal").modal("hide");
-                edit(Id)} else {
+                if ($("#contentData").html() !== $(`#${Id}_edited`).val()) {
+                    e.preventDefault();
                     swal({
-                    icon: "info",
-                    text: "You haven't changed anything!"
-                });
-                } if($(`#${Id}_edited`).val() === "") {
+                        icon: "success",
+                        text: "Story updated!"
+                    });
+                    $(".updateModal").modal("hide");
+                    edit(Id)
+                } else {
                     swal({
-                    icon: "error",
-                    text: "This can't be empty!"
-                });
+                        icon: "info",
+                        text: "You haven't changed anything!"
+                    });
+                }
+                if ($(`#${Id}_edited`).val() === "") {
+                    swal({
+                        icon: "error",
+                        text: "This can't be empty!"
+                    });
                 }
             })
 
@@ -165,12 +171,12 @@
                 var id = temp.split("_")
                 if (id[0] == "delete") {
                     swal({
-                        title: "Are you sure?",
-                        text: "Once deleted, you will not be able to recover this file!",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                    })
+                            title: "Are you sure?",
+                            text: "Once deleted, you will not be able to recover this file!",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                        })
                         .then((willDelete) => {
                             if (willDelete) {
                                 deleteItem(id[1])
@@ -183,8 +189,9 @@
 
             function addRows(items) {
                 var buttons = $("<div>").append(
-                    $('<button id="update_' + items._id + '" class="edit btn btn-info update-btn btn-sm action-btn" data-toggle="modal" data-target="#' + items.title + 'Edit">', {
-                    }).text("Edit").css({
+                    $('<button id="update_' + items._id +
+                        '" class="edit btn btn-info update-btn btn-sm action-btn" data-toggle="modal" data-target="#' +
+                        items.title + 'Edit">', {}).text("Edit").css({
                         marginLeft: "10px"
                     }),
                     $("<button>", {
@@ -194,18 +201,40 @@
                         marginLeft: "10px"
                     })
                 )
-                $('<div id="' + items.title + 'Search" class="card mt-3 main" style="width:280px; height:auto;">', {
-                    id: items._id
-                }).append(
-                    $('<img style="width:100%" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg "/>').addClass('card-img-top'),
+                $('<div class="cards" id="' + items.title +
+
+                    'Search" class="card mt-3 main" style="width:280px; height:auto;">', {
+                        id: items._id
+                    }).append(
+                    $(
+                        '<img style="width:100%" src="https://www.chronicle.com//img/photos/biz/photo_87587_landscape_850x566.jpg "/>'
+                    )
+                    .addClass('card-img-top'),
                     $('<h4 id="' + items.title + 'Search">').text(items.title).addClass("card-title"),
                     $('<p>').text(items.description).addClass("card-text"),
-                    $('<button type="button" id="read" class="btn btn-secondary" data-toggle="modal" data-target="#' + items.title + '">').text("Read"),
+                    $('<button type="button" id="read" class="btn btn-secondary" data-toggle="modal" data-target="#' +
+                        items.title + '">').text("Read"),
                     $('<div>').append($("<br>"), buttons, $("<br>")),
                 ).appendTo('.row')
                 current = items.content
-                $("body").append('<div class="modal fade" id ="' + items.title + '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="contentData">' + current + '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>');
-                $("body").append('<div data-backdrop="static" data-keyboard="false" class="modal fade updateModal" id ="' + items.title + 'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' + items.title + '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="' + items._id + '_edited">' + current + '</textarea></div><div class="modal-footer"><button class="save btn btn-info update-btn btn-sm action-btn" id="save_' + items._id + '" type="button" class="btn btn-default">Save</button></div></div></div></div>');
+                $("body").append('<div class="modal fade" id ="' + items
+                    .title +
+                    '" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' +
+                    items.title +
+                    '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p id="contentData">' +
+                    current +
+                    '</p></div><div class="modal-footer"><button type="button" class="edit btn btn-info update-btn btn-sm action-btn" data-dismiss="modal">Done</button></div></div></div></div>'
+                );
+                $("body").append(
+                    '<div data-backdrop="static" data-keyboard="false" class="modal fade updateModal" id ="' +
+                    items.title +
+                    'Edit" role ="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">' +
+                    items.title +
+                    '</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><textarea class="form-control" rows="15" id="' +
+                    items._id + '_edited">' + current +
+                    '</textarea></div><div class="modal-footer"><button class="save btn btn-info update-btn btn-sm action-btn" id="save_' +
+                    items._id +
+                    '" type="button" class="btn btn-default">Save</button></div></div></div></div>');
             }
 
             function edit(id) {
